@@ -34,6 +34,7 @@ def clinic_info():
     return {
         "clinic_info": CLINIC_DATA["clinic_info"],
         "doctors": CLINIC_DATA["doctors"],
+        "treatments": CLINIC_DATA["treatments"],
     }
 
 

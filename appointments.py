@@ -40,3 +40,7 @@ def book_appointment(day: str, time: str, patient_name: str) -> str:
 def get_clinic_info() -> dict:
     """Return general clinic information."""
     return CLINIC_DATA["clinic_info"]
+
+def get_treatments() -> list[str]:
+    """Return the list of treatment types offered by the clinic."""
+    return CLINIC_DATA["treatments"]
