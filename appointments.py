@@ -1,29 +1,42 @@
-# Temporary in-memory storage (we'll replace with a real database later)
-booked_appointments = []
+import json
+from database import init_db, get_booked_slots, add_appointment
 
-AVAILABLE_SLOTS = [
-    "Monday 10:00",
-    "Monday 15:00",
-    "Tuesday 11:00",
-    "Tuesday 17:00",
-    "Wednesday 09:00",
-]
+init_db()
+
+with open("data/clinic_schedule.json", "r") as f:
+    CLINIC_DATA = json.load(f)
+
+SCHEDULE = CLINIC_DATA["schedule"]
 
 
 def check_availability(day: str) -> list[str]:
     """Return available time slots for a given day."""
     day = day.capitalize()
-    slots = [slot for slot in AVAILABLE_SLOTS if slot.startswith(day)]
-    slots = [slot for slot in slots if slot not in booked_appointments]
-    return slots
+    booked = get_booked_slots()
+
+    if day not in SCHEDULE:
+        return []
+
+    all_slots = [f"{day} {time}" for time in SCHEDULE[day]]
+    available = [slot for slot in all_slots if slot not in booked]
+    return available
 
 
 def book_appointment(day: str, time: str, patient_name: str) -> str:
     """Book an appointment if the slot is available."""
-    slot = f"{day.capitalize()} {time}"
-    if slot not in AVAILABLE_SLOTS:
+    day = day.capitalize()
+    slot = f"{day} {time}"
+    booked = get_booked_slots()
+
+    if day not in SCHEDULE or time not in SCHEDULE[day]:
         return f"Sorry, {slot} is not a valid slot."
-    if slot in booked_appointments:
+    if slot in booked:
         return f"Sorry, {slot} is already booked."
-    booked_appointments.append(slot)
+
+    add_appointment(day, time, patient_name)
     return f"Appointment booked for {patient_name} on {slot}."
+
+
+def get_clinic_info() -> dict:
+    """Return general clinic information."""
+    return CLINIC_DATA["clinic_info"]

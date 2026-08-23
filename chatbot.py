@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from google import genai
-from appointments import check_availability, book_appointment
+from appointments import check_availability, book_appointment, get_clinic_info
 
 load_dotenv()
 
@@ -11,7 +11,7 @@ client = genai.Client(api_key=api_key)
 chat = client.chats.create(
     model="gemini-3.6-flash",
     config={
-        "tools": [check_availability, book_appointment],
+        "tools": [check_availability, book_appointment, get_clinic_info],
         "system_instruction": """You are a friendly administrative assistant 
         for a psychiatric clinic. Your only job is to help patients check 
         available appointment slots and book appointments, and answer basic 
