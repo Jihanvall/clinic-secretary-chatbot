@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from google import genai
-from appointments import check_availability, book_appointment, get_clinic_info
+from appointments import check_availability, book_appointment, get_clinic_info, get_treatments
 
 load_dotenv()
 
@@ -27,7 +27,7 @@ def create_chat():
     return client.chats.create(
         model="gemini-3.6-flash",
         config={
-            "tools": [check_availability, book_appointment, get_clinic_info],
+            "tools": [check_availability, book_appointment, get_clinic_info, get_treatments],
             "system_instruction": SYSTEM_INSTRUCTION,
         },
     )

@@ -1,19 +1,27 @@
 {
   "clinic_info": {
     "name": "Wellness Psychiatric Clinic",
-    "working_hours": "Sunday-Thursday, 9:00 AM - 5:00 PM",
+    "working_hours": "Monday-Friday, 9:00 AM - 5:00 PM",
     "location": "123 Main Street, Tunis",
-    "phone": "+216 12 345 678"
+    "phone": "+216 XX XXX XXX"
   },
   "doctors": [
     {"name": "Dr. Nancy", "specialty": "General Psychiatry"},
     {"name": "Dr. Karim", "specialty": "Child Psychiatry"}
   ],
+  "treatments": [
+    "Individual Therapy",
+    "Cognitive Behavioral Therapy (CBT)",
+    "Family Therapy",
+    "Anxiety & Depression Management",
+    "Child & Adolescent Psychiatry",
+    "Medication Management"
+  ],
   "schedule": {
-    "Sunday": ["10:00", "11:00", "12:00"],
     "Monday": ["09:00", "10:00", "11:00", "14:00", "15:00"],
     "Tuesday": ["09:00", "10:00", "13:00", "16:00"],
     "Wednesday": ["10:00", "11:00", "14:00"],
-    "Thursday": ["09:00", "10:00", "15:00", "16:00"]
+    "Thursday": ["09:00", "10:00", "15:00", "16:00"],
+    "Friday": ["10:00", "11:00", "12:00"]
   }
 }
