@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Wellness Psychiatric Clinic</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f7f9fa;
+    color: #333;
+  }
+
+  header {
+    background: linear-gradient(135deg, #4a90a4, #3a7a8c);
+    color: white;
+    padding: 60px 20px;
+    text-align: center;
+  }
+
+  header h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+  }
+
+  header p {
+    font-size: 1.1em;
+    opacity: 0.9;
+  }
+
+  section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 50px 20px;
+  }
+
+  section h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #4a90a4;
+  }
+
+  .doctors {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .doctor-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    width: 250px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+
+  .doctor-card .avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: #4a90a4;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    margin: 0 auto 16px;
+  }
+
+  .doctor-card h3 {
+    margin-bottom: 6px;
+  }
+
+  .doctor-card p {
+    color: #777;
+  }
+
+  .info-box {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid #eee;
+  }
+
+  .info-row:last-child {
+    border-bottom: none;
+  }
+
+  .info-row span:first-child {
+    font-weight: bold;
+    color: #4a90a4;
+  }
+
+  /* Floating chat button */
+  #chat-toggle {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: #4a90a4;
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6em;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    z-index: 1000;
+  }
+
+ #chat-window {
+  position: fixed;
+  bottom: 90px;
+  right: 24px;
+  width: 350px;
+  height: 500px;
+  max-height: 70vh;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1000;
+}
+
+#chat-window iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Wellness Psychiatric Clinic</h1>
+  <p>Compassionate mental health care, whenever you need it.</p>
+</header>
+
+<section>
+  <h2>Our Doctors</h2>
+  <div class="doctors" id="doctors-list">
+    <!-- filled dynamically -->
+  </div>
+</section>
+
+<section>
+  <h2>Clinic Information</h2>
+  <div class="info-box" id="clinic-info">
+    <!-- filled dynamically -->
+  </div>
+</section>
+
+<div id="chat-toggle" onclick="toggleChat()">💬</div>
+<div id="chat-window">
+  <iframe src="/chat-widget"></iframe>
+</div>
+
+<script>
+function toggleChat() {
+  const win = document.getElementById("chat-window");
+  win.style.display = win.style.display === "flex" ? "none" : "flex";
+}
+
+async function loadClinicInfo() {
+  const response = await fetch("/clinic-info");
+  const data = await response.json();
+
+  const doctorsList = document.getElementById("doctors-list");
+  data.doctors.forEach(doc => {
+    const card = document.createElement("div");
+    card.className = "doctor-card";
+    card.innerHTML = `
+      <div class="avatar">${doc.name.charAt(4)}</div>
+      <h3>${doc.name}</h3>
+      <p>${doc.specialty}</p>
+    `;
+    doctorsList.appendChild(card);
+  });
+
+  const info = data.clinic_info;
+  document.getElementById("clinic-info").innerHTML = `
+    <div class="info-row"><span>Working Hours</span><span>${info.working_hours}</span></div>
+    <div class="info-row"><span>Location</span><span>${info.location}</span></div>
+    <div class="info-row"><span>Phone</span><span>${info.phone}</span></div>
+  `;
+}
+
+loadClinicInfo();
+</script>
+
+</body>
+</html>

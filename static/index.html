@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chat with Anna</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: white;
+  }
+
+  .chat-header {
+    background: linear-gradient(135deg, #4a90a4, #2f6373);
+    color: white;
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+
+  .chat-header .avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: white;
+    color: #2f6373;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2em;
+  }
+
+  .chat-header .info h3 {
+    font-size: 1.05em;
+  }
+
+  .chat-header .info p {
+    font-size: 0.8em;
+    opacity: 0.85;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    background: #4caf50;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .chat-messages {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #f2f6f7;
+  }
+
+  .message {
+    max-width: 78%;
+    padding: 10px 14px;
+    border-radius: 16px;
+    line-height: 1.4;
+    font-size: 0.95em;
+    animation: fadeIn 0.25s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .user-message {
+    align-self: flex-end;
+    background: #4a90a4;
+    color: white;
+    border-bottom-right-radius: 4px;
+  }
+
+  .bot-message {
+    align-self: flex-start;
+    background: white;
+    color: #333;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .chat-input {
+    display: flex;
+    padding: 12px;
+    border-top: 1px solid #eee;
+    background: white;
+  }
+
+  .chat-input input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    outline: none;
+  }
+
+  .chat-input button {
+    margin-left: 8px;
+    padding: 10px 18px;
+    background: #4a90a4;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<div class="chat-header">
+  <div class="avatar">A</div>
+  <div class="info">
+    <h3>Anna</h3>
+    <p><span class="status-dot"></span> Online</p>
+  </div>
+</div>
+
+<div class="chat-messages" id="chat-messages"></div>
+
+<div class="chat-input">
+  <input type="text" id="user-input" placeholder="Type a message...">
+  <button onclick="sendMessage()">Send</button>
+</div>
+
+<script>
+function addMessage(text, className) {
+  const messages = document.getElementById("chat-messages");
+  const div = document.createElement("div");
+  div.className = "message " + className;
+  div.textContent = text;
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+async function sendMessage() {
+  const input = document.getElementById("user-input");
+  const message = input.value.trim();
+  if (!message) return;
+
+  addMessage(message, "user-message");
+  input.value = "";
+
+  const botDiv = document.createElement("div");
+  botDiv.className = "message bot-message";
+  document.getElementById("chat-messages").appendChild(botDiv);
+
+  const response = await fetch("/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: message }),
+  });
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  const messages = document.getElementById("chat-messages");
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    botDiv.textContent += decoder.decode(value, { stream: true });
+    messages.scrollTop = messages.scrollHeight;
+  }
+}
+
+document.getElementById("user-input").addEventListener("keypress", function(e) {
+  if (e.key === "Enter") sendMessage();
+});
+
+window.onload = function() {
+  addMessage("Hi! I'm Anna, your clinic assistant. How can I help you today? 😊", "bot-message");
+};
+</script>
+
+</body>
+</html>
