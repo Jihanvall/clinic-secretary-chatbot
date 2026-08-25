@@ -41,9 +41,12 @@ def clinic_info():
 @app.post("/chat")
 def chat_endpoint(chat_message: ChatMessage):
     def generate():
-        response = chat.send_message_stream(chat_message.message)
-        for chunk in response:
-            if chunk.text:
-                yield chunk.text
+        try:
+            response = chat.send_message_stream(chat_message.message)
+            for chunk in response:
+                if chunk.text:
+                    yield chunk.text
+        except Exception as e:
+            yield "Sorry, I'm having trouble connecting right now. Please try again in a moment."
 
     return StreamingResponse(generate(), media_type="text/plain")
