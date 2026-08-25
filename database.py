@@ -33,3 +33,26 @@ def add_appointment(day: str, time: str, patient_name: str):
     )
     conn.commit()
     conn.close()
+
+def cancel_appointment(day: str, time: str) -> bool:
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute(
+        "DELETE FROM appointments WHERE day = ? AND time = ?",
+        (day, time),
+    )
+    deleted = cursor.rowcount > 0
+    conn.commit()
+    conn.close()
+    return deleted
+
+def find_appointment(day: str, time: str) -> bool:
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT 1 FROM appointments WHERE day = ? AND time = ?",
+        (day, time),
+    )
+    exists = cursor.fetchone() is not None
+    conn.close()
+    return exists
